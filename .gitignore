@@ -1,3 +1,28 @@
+### Ansible ###
+*.retry
+**/.ansible
+
+### Docker Secrets, Environment Files ###
+**/secret.*
+**/.env
+**/.envrc
+**/.direnv
+
+### PowerShell ###
+# Exclude packaged modules
+
+# Exclude .NET assemblies from source
+*.dll
+
+### Python ###
+**/__pycache__/
+**/*.py[cod]
+**/*.pyo
+**/*.pyd
+**/.venv
+**/venv/
+**/.ruff_cache/
+### Terraform ###
 # Local .terraform directories
 .terraform/
 
