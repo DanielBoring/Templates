@@ -2,6 +2,21 @@
 
 An organisation-opinionated Bicep wrapper around the [Azure Verified Module (AVM)](https://azure.github.io/Azure-Verified-Modules/) for Virtual Networks. It applies mandatory tagging, a consistent naming convention, and guardrails while keeping the full flexibility of the upstream AVM module.
 
+TL;DR:
+Key design decisions
+One file per VNet — adding a new VNet means copying a .bicepparam file and changing only the values that differ. main.bicep and the wrapper are never touched.
+
+The wrapper enforces:
+
+- Naming convention: vnet-<workload>-<environment>-<region-short> (overridable)
+- Mandatory tags: CostCenter, Owner, BusinessUnit (deployment fails without them)
+- @allowed on environment to catch typos
+- Diagnostics and lock built from the parameters — no boilerplate repeated in each param file
+
+AVM version pinned to 0.5.2 in the wrapper. Upgrading is a one-line change in modules/vnet-wrapper.bicep and all VNets pick it up.
+
+bicepconfig.json sets the br/public alias pointing to mcr.microsoft.com/bicep/avm/res so the module reference in the wrapper is clean and IDE tooling resolves it correctly.
+
 ---
 
 ## Table of Contents

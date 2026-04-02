@@ -2,6 +2,17 @@
 
 An organisation-opinionated Bicep wrapper around the [Azure Verified Module (AVM)](https://azure.github.io/Azure-Verified-Modules/) for Virtual Machines. It applies mandatory tagging, consistent naming, auto-named disks, and sensible extension defaults (Azure Monitor Agent, Network Watcher, Dependency Agent) while exposing a simplified parameter surface to consumers.
 
+TL;DR
+Key differences from the VNet wrapper
+Secrets handling — adminUsername and adminPassword are @secure(). The parameter files use readEnvironmentVariable() so credentials are never stored in source control. The deploy.ps1 warns if the env vars aren't set before deployment.
+
+Auto-named disks — The wrapper generates <vmname>-osdisk and <vmname>-datadisk-01/02/… automatically from simplified input objects. Consumers just specify diskSizeGB, lun, and optionally storageAccountType.
+
+NIC built from simple params — Instead of a full nicConfigurations object (6+ nested properties), consumers provide subnetResourceId, privateIPAllocationMethod, and two bools. The wrapper assembles the NIC.
+
+Extension booleans — AMA, Dependency Agent, and Network Watcher default to true. Antimalware and Entra join default to false. All are single-parameter toggles.
+
+OS branching — Windows vs Linux params (windowsPatchMode, linuxPatchMode, disablePasswordAuthentication, sshPublicKeys, timeZone, licenseType) are conditionally passed to AVM so the same wrapper handles both OS types cleanly.
 ---
 
 ## Table of Contents
