@@ -1,0 +1,61 @@
+# ============================================================
+# vm-windows-dev.tfvars
+# Windows Server 2022 — development VM
+#
+# Deploy with:
+#   terraform apply -var-file="environments/vm-windows-dev.tfvars"
+#
+# Secrets:
+#   $env:TF_VAR_admin_username = 'azureadmin'
+#   $env:TF_VAR_admin_password = 'P@ssw0rd!ChangeMe'
+# ============================================================
+
+subscription_id     = "00000000-0000-0000-0000-000000000000"
+resource_group_name = "rg-compute-dev"
+
+workload_name   = "app"
+environment     = "dev"
+location        = "eastus"
+instance_number = "01"
+
+os_type = "Windows"
+vm_size = "Standard_B2ms"   # Cost-optimised for dev; use Standard_D2s_v5 for prod
+
+source_image_reference = {
+  publisher = "MicrosoftWindowsServer"
+  offer     = "WindowsServer"
+  sku       = "2022-datacenter-azure-edition"
+  version   = "latest"
+}
+
+subnet_id         = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-network-dev/providers/Microsoft.Network/virtualNetworks/vnet-hub-dev/subnets/snet-compute-dev"
+availability_zone = null
+
+os_disk_size_gb              = 0
+os_disk_storage_account_type = "StandardSSD_LRS"   # Lower cost for dev
+
+data_disks = []
+
+windows_patch_mode = "AutomaticByPlatform"
+time_zone          = "Eastern Standard Time"
+
+mandatory_tags = {
+  CostCenter   = "CC-12345"
+  Owner        = "platform-team@example.com"
+  BusinessUnit = "Engineering"
+}
+
+additional_tags = {
+  AutoShutdown = "1900"
+  Criticality  = "Low"
+}
+
+enable_azure_monitor_agent   = true
+enable_dependency_agent      = true
+enable_network_watcher_agent = true
+enable_antimalware           = false
+enable_entra_id_join         = false
+
+resource_lock           = "None"
+enable_boot_diagnostics = true
+enable_telemetry        = true

@@ -1,0 +1,73 @@
+# ============================================================
+# vm-linux-dev.tfvars
+# Ubuntu 22.04 LTS — development VM, SSH key authentication
+#
+# Deploy with:
+#   terraform apply -var-file="environments/vm-linux-dev.tfvars"
+#
+# Secrets (password not required for SSH-only Linux VMs):
+#   $env:TF_VAR_admin_username = 'azureadmin'
+#
+# SSH key: Replace the public_key value below with your own.
+#   Generate: ssh-keygen -t rsa -b 4096 -f ~/.ssh/vm-linux-dev
+#   Print:    Get-Content ~/.ssh/vm-linux-dev.pub
+# ============================================================
+
+subscription_id     = "00000000-0000-0000-0000-000000000000"
+resource_group_name = "rg-compute-dev"
+
+workload_name   = "lnx"
+environment     = "dev"
+location        = "eastus"
+instance_number = "01"
+
+os_type = "Linux"
+vm_size = "Standard_B2ms"
+
+source_image_reference = {
+  publisher = "Canonical"
+  offer     = "0001-com-ubuntu-server-jammy"
+  sku       = "22_04-lts-gen2"
+  version   = "latest"
+}
+
+subnet_id         = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-network-dev/providers/Microsoft.Network/virtualNetworks/vnet-hub-dev/subnets/snet-compute-dev"
+availability_zone = null
+
+os_disk_size_gb              = 0
+os_disk_storage_account_type = "StandardSSD_LRS"
+
+data_disks = []
+
+# ---- Linux: SSH key authentication ----
+disable_password_authentication = true
+
+ssh_public_keys = [
+  {
+    username   = "azureadmin"
+    public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC... REPLACE_WITH_YOUR_PUBLIC_KEY"
+  }
+]
+
+linux_patch_mode = "AutomaticByPlatform"
+
+mandatory_tags = {
+  CostCenter   = "CC-12345"
+  Owner        = "platform-team@example.com"
+  BusinessUnit = "Engineering"
+}
+
+additional_tags = {
+  AutoShutdown = "1900"
+  Criticality  = "Low"
+}
+
+enable_azure_monitor_agent   = true
+enable_dependency_agent      = true
+enable_network_watcher_agent = true
+enable_antimalware           = false   # Linux — not applicable
+enable_entra_id_join         = false
+
+resource_lock           = "None"
+enable_boot_diagnostics = true
+enable_telemetry        = true

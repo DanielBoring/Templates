@@ -1,0 +1,84 @@
+# ============================================================
+# terraform.tfvars.example
+#
+# Copy this file to terraform.tfvars and fill in your values.
+# OR use one of the pre-built files in environments/.
+#
+# IMPORTANT: Never commit terraform.tfvars to source control.
+#            It is listed in .gitignore.
+#
+# SECRETS: Set admin_username and admin_password via environment
+#          variables instead of this file:
+#            $env:TF_VAR_admin_username = 'azureadmin'
+#            $env:TF_VAR_admin_password = 'P@ssw0rd!ChangeMe'
+# ============================================================
+
+# ---- Subscription / resource group ----
+subscription_id     = "00000000-0000-0000-0000-000000000000"
+resource_group_name = "rg-compute-dev"
+
+# ---- Naming ----
+workload_name   = "app"
+environment     = "dev"
+location        = "eastus"
+instance_number = "01"
+
+# ---- VM spec ----
+os_type = "Windows"
+vm_size = "Standard_D2s_v5"
+
+source_image_reference = {
+  publisher = "MicrosoftWindowsServer"
+  offer     = "WindowsServer"
+  sku       = "2022-datacenter-azure-edition"
+  version   = "latest"
+}
+
+# ---- Credentials (prefer TF_VAR_* env vars) ----
+# admin_username = "azureadmin"
+# admin_password = "CHANGE_ME"
+
+# ---- Networking ----
+subnet_id         = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-network-dev/providers/Microsoft.Network/virtualNetworks/vnet-hub-dev/subnets/snet-compute-dev"
+availability_zone = null
+
+# ---- Disks ----
+os_disk_size_gb              = 0       # 0 = use image default
+os_disk_storage_account_type = "Premium_LRS"
+
+data_disks = []
+# data_disks = [
+#   { disk_size_gb = 256, lun = 0 }
+#   { disk_size_gb = 512, lun = 1, caching = "None" }   # Use None for transaction logs
+# ]
+
+# ---- Windows ----
+windows_patch_mode = "AutomaticByPlatform"
+time_zone          = "Eastern Standard Time"
+# license_type     = "Windows_Server"  # Uncomment if using Azure Hybrid Benefit
+
+# ---- Tags ----
+mandatory_tags = {
+  CostCenter   = "CC-12345"
+  Owner        = "platform-team@example.com"
+  BusinessUnit = "Engineering"
+}
+
+additional_tags = {
+  PatchGroup   = "Wave1-Sunday-2AM"
+  AutoShutdown = "1900"
+  Criticality  = "Low"
+}
+
+# ---- Extensions ----
+enable_azure_monitor_agent   = true
+enable_dependency_agent      = true
+enable_network_watcher_agent = true
+enable_antimalware           = false
+enable_entra_id_join         = false
+
+# ---- Governance ----
+resource_lock           = "None"
+enable_boot_diagnostics = true
+enable_telemetry        = true
+# log_analytics_workspace_id = "/subscriptions/.../workspaces/law-platform-dev"
